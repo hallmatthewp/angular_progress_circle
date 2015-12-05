@@ -1,3 +1,6 @@
+# angular_progress_circle
+Angular directive for a circular progress widget
+
 # Angular Lib Template
 
 This is a very basic starter template for creating an angular library, such as a directive or service. It uses [Gulp](http://gulpjs.com) for asset compilation (Coffeescript and Less) and [Jasmine](http://jasmine.github.io/) and [Karama](http://karma-runner.github.io/) for testing.
