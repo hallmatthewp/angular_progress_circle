@@ -1,6 +1,4 @@
-app = angular.module("progress-circle-module", [])
-
-app.directive "progress", ->
+app.directive "progressCircle", ->
   {
     restrict: "EA"
     replace: true
