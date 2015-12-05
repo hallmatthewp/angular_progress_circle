@@ -1,0 +1,36 @@
+<html ng-app>
+  <head>
+    <meta charset="utf-8">
+    <title>Progress Circle</title>
+    <script type="text/javascript" src="vendor/bower/angular/angular.js"></script>
+    <script type="text/javascript" src="dist/my-package.js"></script>
+    <script>
+      function ProgressCircle($scope){
+        $scope.actual = 0;
+        $scope.expected = 0;
+      }
+    </script>
+  </head>
+  <body ng-controller="ProgressCircle">
+    Actual: <input ng-model="actual" type="text"/>
+    <br>
+    Expected: <input ng-model="expected" type="text"/>
+    <br>
+    Actual: {{actual}} Expected: {{expected}}
+    <div progress> init </div>
+  </body>
+</html>
+
+
+
+<!-- <div id='container' data-ng-controller='DemoCtrl'>
+      
+    </div>
+    <script type="text/javascript" src="vendor/bower/angular/angular.js"></script>
+    <script type="text/javascript" src="dist/my-package.js"></script>
+    <script type='text/javascript'>
+      var app = angular.module("DemoApp", []);
+      app.controller("DemoCtrl", function($scope) {
+        $scope.myLabel = "Hello, World";
+      }); -->
+      <!-- </script> -->
