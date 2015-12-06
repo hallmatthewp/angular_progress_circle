@@ -9,8 +9,8 @@
     <script>
       var app = angular.module("ProgressCircleApp", [])
       app.controller("ProgressCircle", function($scope) {
-        $scope.actual = 0;
-        $scope.expected = 0;
+        $scope.actual = .25;
+        $scope.expected = .85;
       })
     </script>
 
@@ -22,10 +22,11 @@
       <br>
       Expected: <input ng-model="expected" type="text"/>
       <br>
+      <progress-circle actual={{actual}} expected={{expected}}></progress-circle>
+      <br>
       Actual: {{actual}} Expected: {{expected}}
-      <div progress-circle> init </div>
     </div>
-    
     <script type="text/javascript" src="dist/my-package.js"></script>
   </body>
+
 </html>
