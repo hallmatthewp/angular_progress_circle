@@ -7,8 +7,12 @@ innerPercent = .15
 outerPercent = .50
 innerThickness = 10
 outerThickness = 20
+defaultArcColor = 'chartreuse'
 
-app.directive "progressCircle", ($parse, $window) ->
+actualArc = {}
+expectedArc = {}
+
+app.directive "progressCircle",  ->
     restrict: "EA"
     replace: true
     template: "<svg width='#{svgWidth}' height='#{svgHeight}'></svg>"
@@ -31,9 +35,9 @@ app.directive "progressCircle", ($parse, $window) ->
             #     .text(percent)
 
         # take value from 0-1 and draw arc
-        drawArc = (percent, radius, thickness, colorIsRed) ->
+        drawArc = (percent, radius, thickness, colorIsRed, arcClass) ->
             console.log("drawArc: #{percent}, #{radius}")
-            color = 'chartreuse'
+            color = defaultArcColor
             arc = d3.svg.arc()
                 .innerRadius radius - thickness
                 .outerRadius radius
@@ -41,28 +45,49 @@ app.directive "progressCircle", ($parse, $window) ->
                 .endAngle 2*Math.PI*percent
 
             if colorIsRed
-                color = 'orange'
-            
+                color = 'red'
+
             arcValue = svg.append 'path'
                 .style 'fill', color
                 .attr 'd', arc
+                .attr 'class', arcClass
 
         drawExpectedArc = ->
-            drawArc(scope.expected, innerRadius, innerThickness, 0)
+            console.log("drawExpectedArc")
+            #d3.selectAll("svg").remove();
+            expectedArc = drawArc(attrs.expected, innerRadius, innerThickness, 0, 'expected')
 
         drawActualArc = ->
-            colorIsRed = arcColorIsRed(scope.actual, scope.expected)
-            drawArc(scope.actual, outerRadius, outerThickness, colorIsRed)
+            console.log("drawActualArc")
+            colorIsRed = arcColorIsRed(attrs.actual, attrs.expected)
+            actualArc = drawArc(attrs.actual, outerRadius, outerThickness, colorIsRed, 'actual')
+            drawText(attrs.actual)
+
+        drawBothArcs = ->
+            console.log("drawBothArcs")
+            drawActualArc()
+            drawExpectedArc()
+
+        transitionBothArcs = ->
+            console.log("transitionBothArcs")
+            transitionActualArc()
+            transitionExpectedArc()
+
+        transitionExpectedArc = ->
+
+
+        transitionActualArc = ->
+
 
         # return color based on values of actual and expected percents
         arcColorIsRed = (actualPercent, expectedPercent) ->
             console.log("arcColor: #{actualPercent}, #{expectedPercent}")
             returnVal = 0
-            console.log("checking color. actual: #{actualPercent}, #{expectedPercent}")
-            if expectedPercent - actualPercent >= 50
+            console.log("checking color: actual: #{actualPercent}, #{expectedPercent}")
+            if expectedPercent - actualPercent >= .5
                 console.log("expected 50 > actual")
                 returnVal = 1
-            if actualPercent > 25
+            if actualPercent > .25
                 console.log("actual > 25")
                 returnVal = 1
 
@@ -72,17 +97,13 @@ app.directive "progressCircle", ($parse, $window) ->
         svg = d3.select('svg')
             .append('g')
                 .attr("transform", "translate(#{svgWidth/2}, #{svgHeight/2})") 
-        console.log("SVG: "+svg)
-        console.log("attrs "+attrs)
-        console.log("scope #{scope.actual}")
-        console.log("Actual #{attrs.actual}")
-        console.log("Expected #{attrs.expected}")
-
-        scope.$watch 'expected', drawExpectedArc
-        scope.$watch 'actual', drawActualArc
-
-        # drawArc(scope.expected, innerRadius, innerThickness, 0)
-        # drawArc(scope.actual, outerRadius, outerThickness, 
-        #     arcColorIsRed(scope.actual, scope.expected))
+        # console.log("SVG: "+svg)
+        # console.log("attrs "+attrs)
+        # console.log("scope #{scope.actual}")
+        console.log("Actual: #{attrs.actual}")
+        console.log("Expected: #{attrs.expected}")
+        drawBothArcs()
         drawCircle(innerPercent, circleRadius)
-        drawText(scope.actual)
+        scope.$watch 'expected', transitionBothArcs
+        scope.$watch 'actual', transitionBothArcs
+
