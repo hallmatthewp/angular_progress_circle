@@ -1,14 +1,16 @@
-# Shape size defaults
+# Size & position defaults
 svgHeight = 500
 svgWidth = 500
-innerRadius = 75
-outerRadius = 100
+innerRadius = 90
+outerRadius = 110
 cornerRadius = 20
-circleRadius = 60
+circleRadius = 70
 innerPercent = .15
 outerPercent = .50
-innerThickness = 10
-outerThickness = 20
+innerThickness = 5
+outerThickness = 18
+defaultTextYPos = 20
+defaultTextPercentYPos = -3
 
 # Color defaults
 defaultActualArcColor = '#78C000'
@@ -22,13 +24,12 @@ defaultTextPercentColor = '#444444'
 # Font defaults
 defaultTextFontSize = "15px"
 defaultTextPercentFontSize = "40px"
+defaultTextFontFamily = "sans-serif"
+defaultTextPercentFontFamily = "sans-serif"
 
 # Timing defaults
 defaultDuration = 750
 defaultDelay = 100
-
-actualArc = {}
-expectedArc = {}
 
 app.directive "progressCircle",  ->
     restrict: "EA"
@@ -54,19 +55,19 @@ app.directive "progressCircle",  ->
             svg.append("text")
                 .text "Progress"
                 .attr "font-size", defaultTextFontSize
-                .attr "font-family", "sans-serif"
+                .attr "font-family", defaultTextFontFamily
                 .attr "fill", defaultTextColor
                 .style "text-anchor", "middle"
-                .attr("transform", "translate(0, 15)")
+                .attr("transform", "translate(0, #{defaultTextYPos})")
 
             # Percent value
             svg.append("text")
                 .text percent*100+"%"
                 .attr "font-size", defaultTextPercentFontSize
-                .attr "font-family", "sans-serif"
+                .attr "font-family", defaultTextPercentFontFamily
                 .attr "fill", defaultTextColor
                 .style "text-anchor", "middle"
-                .attr("transform", "translate(0, -5)") 
+                .attr("transform", "translate(0, #{defaultTextPercentYPos})") 
 
         # Create and return SVG arc 
         createArc = (percent, radius, thickness) ->
@@ -171,7 +172,7 @@ app.directive "progressCircle",  ->
 
             if (attrs.actual > 1)
                 attrs.actual = 1
-            if (attrs.actual < 0)
+            if (attrs.actual < .0001)
                 attrs.actual = 0
 
             if (attrs.expected > 1)
