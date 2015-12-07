@@ -96,24 +96,36 @@ app.directive "progressCircle",  ->
             console.log("transitionActualArc")
 
             transitionArc(@actualArc, @actualArcValue, attrs.actual, defaultDuration)
-            transitionText(attrs.actual)
+            transitionText(attrs.actual)    
+
+        # transitionArc = (arc, arcValue, percent, duration) ->
+        #     console.log("transitionArc")
+
+        #     arcValue.transition()
+        #         .duration(duration)
+        #         .delay(500)
+        #         .attrTween("d", (d, i, a) ->
+        #             console.log(a)
+        #             d3.interpolate(a, percent*2*Math.PI))
+                #.ease('elastic')
+                #.call arcTween, arc, 2*Math.PI*percent     
 
         transitionArc = (arc, arcValue, percent, duration) ->
-            console.log("transitionArc: arc: #{arc} arcValue: #{arcValue}")
+            console.log("transitionArc")
 
             arcValue.transition()
                 .duration(duration)
                 .ease('elastic')
-                .call arcTween, 2*Math.PI*percent     
+                .call arcTween, arc, 2*Math.PI*percent     
 
-        arcTween = (transition, newAngle) ->
+        arcTween = (transition, arc, newAngle) ->
             console.log("arcTween")
 
             transition.attrTween 'd', (d) ->
                 interpolate = d3.interpolate d.endAngle, newAngle
                 (time) ->
                     d.endAngle = interpolate time
-                    @arc d
+                    arc d
 
         # return color based on values of actual and expected percents
         arcColorIsRed = (actualPercent, expectedPercent) ->
