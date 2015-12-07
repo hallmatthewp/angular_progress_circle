@@ -47,7 +47,7 @@ app.directive "progressCircle",  ->
                 .innerRadius radius - thickness
                 .outerRadius radius
                 .startAngle 0
-                .endAngle 2*Math.PI*percent
+                #.endAngle 2*Math.PI*percent
 
         # Append 
         drawArc = (arc, colorIsRed) ->
@@ -56,10 +56,11 @@ app.directive "progressCircle",  ->
                 color = 'red'
 
             arcValue = svg.append 'path'
-                .style 'fill', color
-                .attr 'd', arc
                 .datum
                     endAngle: 0
+                .style 'fill', color
+                .attr 'd', arc
+                
 
         drawExpectedArc = ->
             console.log("drawExpectedArc")
@@ -114,12 +115,13 @@ app.directive "progressCircle",  ->
             console.log("transitionArc")
 
             arcValue.transition()
-                .duration(duration)
-                .ease('elastic')
+                .delay 500
+                .duration duration
+                .ease 'elastic'
                 .call arcTween, arc, 2*Math.PI*percent     
 
         arcTween = (transition, arc, newAngle) ->
-            console.log("arcTween")
+            console.log("arcTween. newAngle: #{newAngle}")
 
             transition.attrTween 'd', (d) ->
                 interpolate = d3.interpolate d.endAngle, newAngle
