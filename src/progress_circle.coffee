@@ -8,6 +8,7 @@ outerPercent = .50
 innerThickness = 10
 outerThickness = 20
 defaultArcColor = 'chartreuse'
+defaultDuration = 750
 
 actualArc = {}
 expectedArc = {}
@@ -34,6 +35,10 @@ app.directive "progressCircle",  ->
             # svg.append("text")
             #     .text(percent)
 
+        transitionText = (text) ->
+            console.log("transitionText")
+
+
         # take value from 0-1 and draw arc
         drawArc = (percent, radius, thickness, colorIsRed, arcClass) ->
             console.log("drawArc: #{percent}, #{radius}")
@@ -55,13 +60,13 @@ app.directive "progressCircle",  ->
         drawExpectedArc = ->
             console.log("drawExpectedArc")
             #d3.selectAll("svg").remove();
-            expectedArc = drawArc(attrs.expected, innerRadius, innerThickness, 0, 'expected')
+            @expectedArc = drawArc(attrs.expected, innerRadius, innerThickness, 0, 'expected')
 
         drawActualArc = ->
             console.log("drawActualArc")
             colorIsRed = arcColorIsRed(attrs.actual, attrs.expected)
-            actualArc = drawArc(attrs.actual, outerRadius, outerThickness, colorIsRed, 'actual')
-            drawText(attrs.actual)
+            @actualArc = drawArc(attrs.actual, outerRadius, outerThickness, colorIsRed, 'actual')
+            @text = drawText(attrs.actual)
 
         drawBothArcs = ->
             console.log("drawBothArcs")
@@ -74,10 +79,28 @@ app.directive "progressCircle",  ->
             transitionExpectedArc()
 
         transitionExpectedArc = ->
-
+            console.log("transitionExpectedArc")
+            transitionArc(@expectedArc, attrs.expected, defaultDuration)
 
         transitionActualArc = ->
+            console.log("transitionActualArc")
+            transitionArc(@actualArc, attrs.actual, defaultDuration)
+            transitionText(attrs.actual)
 
+        transitionArc = (arcValue, percent, duration) ->
+            console.log("transitionArc")
+            arcValue.transition()
+                .duration(duration)
+                .ease('elastic')
+                .call arcTween, 2*Math.PI*percent     
+
+        arcTween = (transition, newAngle) ->
+            console.log("arcTween")
+            transition.attrTween 'd', (d) ->
+                interpolate = d3.interpolate d.endAngle, newAngle
+                (time) ->
+                    d.endAngle = interpolate time
+                    arc d
 
         # return color based on values of actual and expected percents
         arcColorIsRed = (actualPercent, expectedPercent) ->
