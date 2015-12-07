@@ -9,6 +9,7 @@ innerThickness = 10
 outerThickness = 20
 defaultArcColor = 'chartreuse'
 defaultDuration = 750
+defaultDelay = 500
 
 actualArc = {}
 expectedArc = {}
@@ -91,34 +92,35 @@ app.directive "progressCircle",  ->
         transitionExpectedArc = ->
             console.log("transitionExpectedArc")
 
-            transitionArc(@expectedArc, @expectedArcValue, attrs.expected, defaultDuration)
+            transitionArc(@expectedArc, @expectedArcValue, attrs.expected, defaultDuration, 0)
 
         transitionActualArc = ->
             console.log("transitionActualArc")
+            colorIsRed = arcColorIsRed(attrs.actual, attrs.expected)
+            transitionArc(@actualArc, @actualArcValue, attrs.actual, defaultDuration, colorIsRed)
+            transitionText(attrs.actual)      
 
-            transitionArc(@actualArc, @actualArcValue, attrs.actual, defaultDuration)
-            transitionText(attrs.actual)    
-
-        # transitionArc = (arc, arcValue, percent, duration) ->
-        #     console.log("transitionArc")
-
-        #     arcValue.transition()
-        #         .duration(duration)
-        #         .delay(500)
-        #         .attrTween("d", (d, i, a) ->
-        #             console.log(a)
-        #             d3.interpolate(a, percent*2*Math.PI))
-                #.ease('elastic')
-                #.call arcTween, arc, 2*Math.PI*percent     
-
-        transitionArc = (arc, arcValue, percent, duration) ->
+        transitionArc = (arc, arcValue, percent, duration, colorIsRed) ->
             console.log("transitionArc")
+            color = defaultArcColor
+            if (colorIsRed)
+                color = 'red'
 
             arcValue.transition()
-                .delay 500
+                .delay defaultDelay
                 .duration duration
                 .ease 'elastic'
-                .call arcTween, arc, 2*Math.PI*percent     
+                #.style 'color' color
+                .call arcTween, arc, 2*Math.PI*percent
+            arcValue.style('fill', color)  
+
+
+            # if (colorIsRed)
+            #     arcValue.transition()
+            #         .style 'fill', 'red'   
+            # else
+            #     arcValue.transition()
+            #         .style 'fill', 'chartreuse'
 
         arcTween = (transition, arc, newAngle) ->
             console.log("arcTween. newAngle: #{newAngle}")
