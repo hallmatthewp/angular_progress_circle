@@ -113,19 +113,23 @@ app.directive "progressCircle",  ->
             drawExpectedArc()
 
         # Handler function for input changes. Adjusts both arcs to new values.
-        transitionHandler = ->
-            console.log("transitionHandler")
+        actualChangeHandler = ->
+            console.log("actualChangeHandler")
+
+            sanitizeInputs()
+            transitionActualArc()
+
+        expectedChangeHandler = ->
+            console.log("expectedChangeHandler")
 
             sanitizeInputs()
             transitionActualArc()
             transitionExpectedArc()
 
-        # Transition the expected arc position. If the transition warrants a
-        # color change of the actual arc, transition it too
+        # Transition the expected arc position. 
         transitionExpectedArc = ->
             console.log("transitionExpectedArc")
 
-            sanitizeInputs()
             transitionArc(@expectedArc, @expectedArcValue, attrs.expected, defaultExpectedArcColor)
 
         # Transition the actual arc position (and possibly color). Also 
@@ -133,7 +137,6 @@ app.directive "progressCircle",  ->
         transitionActualArc = ->
             console.log("transitionActualArc")
 
-            sanitizeInputs()
             color = getActualArcColor(attrs.actual, attrs.expected)
             transitionArc(@actualArc, @actualArcValue, attrs.actual, color)
 
@@ -206,12 +209,12 @@ app.directive "progressCircle",  ->
 
         # Check inputs
         sanitizeInputs()
-        
+
         # Render circle and arcs/text
         drawCircle(innerPercent, circleRadius)
         drawBothArcs()
 
-        # Set handler function for changes to either input
-        scope.$watch("expected", transitionHandler)
-        scope.$watch("actual", transitionHandler)
+        # Set callback function for changes to either input
+        scope.$watch("expected", expectedChangeHandler)
+        scope.$watch("actual", actualChangeHandler)
 
