@@ -1,5 +1,5 @@
 # Size & position defaults
-sizeMultiplier = 1.5
+sizeMultiplier = 1.4
 svgHeight = 500 * sizeMultiplier
 svgWidth = 500 * sizeMultiplier
 innerRadius = 90 * sizeMultiplier
@@ -11,7 +11,7 @@ outerPercent = .50 * sizeMultiplier
 innerThickness = 5 * sizeMultiplier
 outerThickness = 18 * sizeMultiplier
 textYPos = 20 * sizeMultiplier
-textPercentYPos = -3
+textPercentYPos = -3 * sizeMultiplier
 
 # Color defaults
 defaultActualArcColor = "#78C000"
@@ -112,13 +112,16 @@ app.directive "progressCircle",  ->
             drawActualArc()
             drawExpectedArc()
 
-        # Handler function for input changes. Adjusts both arcs to new values.
+        # Handler function for input changes to actual. Adjusts 
+        # actual arc and text to new value
         actualChangeHandler = ->
             console.log("actualChangeHandler")
 
             sanitizeInputs()
             transitionActualArc()
 
+        # Handler function for input changes to expected. Adjusts both arcs,
+        # as the actual arc's color may require a transition
         expectedChangeHandler = ->
             console.log("expectedChangeHandler")
 
