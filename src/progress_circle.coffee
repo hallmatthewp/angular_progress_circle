@@ -13,13 +13,13 @@ defaultTextYPos = 20
 defaultTextPercentYPos = -3
 
 # Color defaults
-defaultActualArcColor = '#78C000'
-defaultExpectedArcColor = '#C7E596'
-default50DeltaColor = 'red'
-default25DeltaColor = 'orange'
-defaultCircleColor = '#F4F4F4'
-defaultTextColor = '#777777'
-defaultTextPercentColor = '#444444'
+defaultActualArcColor = "#78C000"
+defaultExpectedArcColor = "#C7E596"
+default50DeltaColor = "red"
+default25DeltaColor = "orange"
+defaultCircleColor = "#F4F4F4"
+defaultTextColor = "#777777"
+defaultTextPercentColor = "#444444"
 
 # Font defaults
 defaultTextFontSize = "15px"
@@ -28,8 +28,9 @@ defaultTextFontFamily = "sans-serif"
 defaultTextPercentFontFamily = "sans-serif"
 
 # Timing defaults
-defaultDuration = 750
-defaultDelay = 100
+defaultDuration = 2000
+defaultDelay = 150
+defaultEase = "elastic"
 
 app.directive "progressCircle",  ->
     restrict: "EA"
@@ -37,17 +38,15 @@ app.directive "progressCircle",  ->
     template: "<svg width='#{svgWidth}' height='#{svgHeight}'></svg>"
     link: (scope, elem, attrs) ->
 
-        # draw a circle w/ the percent text in the middle
+        # draw a circle 
         drawCircle = (percent, radius) ->
             console.log("drawCircle: #{percent}, #{radius}")
             console.log(svg)
             svg.append("circle")
-                # .attr("cx", 250)
-                # .attr("cy", 250)
-                .attr("r", radius)
-                .style("fill", defaultCircleColor)
+                .attr "r", radius
+                .style "fill", defaultCircleColor
 
-        # Draw the percentage text on top of the circle
+        # Draw the percentage texts on top of the circle
         drawText = (percent) ->
             console.log("drawText: #{percent}")
 
@@ -58,16 +57,16 @@ app.directive "progressCircle",  ->
                 .attr "font-family", defaultTextFontFamily
                 .attr "fill", defaultTextColor
                 .style "text-anchor", "middle"
-                .attr("transform", "translate(0, #{defaultTextYPos})")
+                .attr "transform", "translate(0, #{defaultTextYPos})"
 
             # Percent value
             svg.append("text")
-                .text percent*100+"%"
+                .text (percent*100).toFixed(0)+"%"
                 .attr "font-size", defaultTextPercentFontSize
                 .attr "font-family", defaultTextPercentFontFamily
                 .attr "fill", defaultTextColor
                 .style "text-anchor", "middle"
-                .attr("transform", "translate(0, #{defaultTextPercentYPos})") 
+                .attr "transform", "translate(0, #{defaultTextPercentYPos})"
 
         # Create and return SVG arc 
         createArc = (percent, radius, thickness) ->
@@ -78,75 +77,88 @@ app.directive "progressCircle",  ->
                 .outerRadius radius
                 .cornerRadius cornerRadius
                 .startAngle 0
-                #.endAngle 2*Math.PI*percent
 
+        # Append an arc to the SVG container and return the path value
         drawArc = (arc, color) ->
             console.log("drawArc")
 
-            arcValue = svg.append 'path'
+            arcValue = svg.append("path")
                 .datum
                     endAngle: 0
-                .style 'fill', color
-                .attr 'd', arc
+                .style "fill", color
+                .attr "d", arc
 
+        # Create and draw the expected arc
         drawExpectedArc = ->
             console.log("drawExpectedArc")
 
             @expectedArc = createArc(attrs.expected, innerRadius, innerThickness)
-            @expectedArcValue = drawArc(@expectedArc, defaultExpectedArcColor, false)
+            @expectedArcValue = drawArc(@expectedArc, defaultExpectedArcColor)
 
+        # Create and draw the actual arc (w/ the correct color) and percent text
         drawActualArc = ->
             console.log("drawActualArc")
 
-            @actualArc = createArc(attrs.actual, outerRadius, outerThickness)
             color = getActualArcColor(attrs.actual, attrs.expected)
+            @actualArc = createArc(attrs.actual, outerRadius, outerThickness)
             @actualArcValue = drawArc(@actualArc, color)
             @textPercent = drawText(attrs.actual)
 
+        # Begin drawing both actual and expected arcs
         drawBothArcs = ->
             console.log("drawBothArcs")
 
             drawActualArc()
             drawExpectedArc()
 
-        transitionBothArcs = ->
-            console.log("transitionBothArcs")
+        # Handler function for input changes. Adjusts both arcs to new values.
+        transitionHandler = ->
+            console.log("transitionHandler")
+
             sanitizeInputs()
             transitionActualArc()
             transitionExpectedArc()
 
+        # Transition the expected arc position. If the transition warrants a
+        # color change of the actual arc, transition it too
         transitionExpectedArc = ->
             console.log("transitionExpectedArc")
-            color = getActualArcColor(attrs.actual, attrs.expected)
-            if (color != defaultActualArcColor)
-                transitionArc(@actualArc, @actualArcValue, attrs.actual, defaultDuration, color)
-            transitionArc(@expectedArc, @expectedArcValue, attrs.expected, defaultDuration, defaultExpectedArcColor)
 
+            sanitizeInputs()
+            transitionArc(@expectedArc, @expectedArcValue, attrs.expected, defaultExpectedArcColor)
+
+        # Transition the actual arc position (and possibly color). Also 
+        # transition the text
         transitionActualArc = ->
             console.log("transitionActualArc")
-            color = getActualArcColor(attrs.actual, attrs.expected)
-            transitionArc(@actualArc, @actualArcValue, attrs.actual, defaultDuration, color)
-            @textPercent.transition()
-                .text attrs.actual*100+"%"      
 
-        transitionArc = (arc, arcValue, percent, duration, color) ->
+            sanitizeInputs()
+            color = getActualArcColor(attrs.actual, attrs.expected)
+            transitionArc(@actualArc, @actualArcValue, attrs.actual, color)
+
+            number = attrs.actual*100
+            @textPercent.transition()
+                .text number.toFixed(0)+"%"   
+
+        # Begin an arc transition. This may also include color change.
+        transitionArc = (arc, arcValue, percent, color) ->
             console.log("transitionArc. percent: #{percent}")
 
             arcValue.transition()
                 .delay defaultDelay
-                .duration duration
-                .ease 'elastic'
-                #.style 'color' color
+                .duration defaultDuration
+                .ease defaultEase
+                .style "fill", color
                 .call arcTween, arc, 2*Math.PI*percent
-            arcValue.style('fill', color)  
 
+        # Helper function to smooth arc transitions
         arcTween = (transition, arc, newAngle) ->
             console.log("arcTween. newAngle: #{newAngle}")
 
-            transition.attrTween 'd', (d) ->
+            transition.attrTween "d", (d) ->
                 interpolate = d3.interpolate d.endAngle, newAngle
-                (time) ->
-                    d.endAngle = interpolate time
+                (t) ->
+                    d.endAngle = interpolate t
                     arc d
 
         # return color based on values of actual and expected percents
@@ -163,8 +175,10 @@ app.directive "progressCircle",  ->
 
             defaultActualArcColor
 
+        # Ensures inputs are a valid number from 0-1
         sanitizeInputs = ->
             console.log("sanitizeInputs before: #{attrs.actual}, #{attrs.expected}")
+
             if (isNaN attrs.actual)
                 attrs.actual = 0
             if (isNaN attrs.expected)
@@ -172,7 +186,8 @@ app.directive "progressCircle",  ->
 
             if (attrs.actual > 1)
                 attrs.actual = 1
-            if (attrs.actual < .0001)
+
+            if (attrs.actual < 0)
                 attrs.actual = 0
 
             if (attrs.expected > 1)
@@ -182,16 +197,20 @@ app.directive "progressCircle",  ->
 
             console.log("sanitizeInputs after: #{attrs.actual}, #{attrs.expected}")
 
-        # Create circle, innerArc, & outerArc
-        svg = d3.select('svg')
-            .append('g')
-                .attr("transform", "translate(#{svgWidth/2}, #{svgHeight/2})") 
+        # Main workflow code below
 
-        console.log("Actual: #{attrs.actual}")
-        console.log("Expected: #{attrs.expected}")
+        # Set all elements within the SVG container to be centered, both x and y
+        svg = d3.select("svg").append "g"
+            .attr "transform", "translate(#{svgWidth/2}, #{svgHeight/2})" 
+
+        # Check inputs
         sanitizeInputs()
+
+        # Render circle and arcs/text
         drawCircle(innerPercent, circleRadius)
         drawBothArcs()
-        scope.$watch 'expected', transitionBothArcs
-        scope.$watch 'actual', transitionBothArcs
+
+        # Set handler function for changes to either input
+        scope.$watch("expected", transitionHandler)
+        scope.$watch("actual", transitionHandler)
 
