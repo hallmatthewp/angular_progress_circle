@@ -206,7 +206,7 @@ app.directive "progressCircle",  ->
 
         # Check inputs
         sanitizeInputs()
-
+        
         # Render circle and arcs/text
         drawCircle(innerPercent, circleRadius)
         drawBothArcs()
