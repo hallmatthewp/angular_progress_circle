@@ -1,16 +1,17 @@
 # Size & position defaults
-svgHeight = 500
-svgWidth = 500
-innerRadius = 90
-outerRadius = 110
-cornerRadius = 20
-circleRadius = 70
-innerPercent = .15
-outerPercent = .50
-innerThickness = 5
-outerThickness = 18
-defaultTextYPos = 20
-defaultTextPercentYPos = -3
+sizeMultiplier = 1.2
+svgHeight = 500 * sizeMultiplier
+svgWidth = 500 * sizeMultiplier
+innerRadius = 90 * sizeMultiplier
+outerRadius = 110 * sizeMultiplier
+cornerRadius = 20 * sizeMultiplier
+circleRadius = 70 * sizeMultiplier
+innerPercent = .15 * sizeMultiplier
+outerPercent = .50 * sizeMultiplier
+innerThickness = 5 * sizeMultiplier
+outerThickness = 18 * sizeMultiplier
+textYPos = 20 * sizeMultiplier
+textPercentYPos = -3
 
 # Color defaults
 defaultActualArcColor = "#78C000"
@@ -22,8 +23,8 @@ defaultTextColor = "#777777"
 defaultTextPercentColor = "#444444"
 
 # Font defaults
-defaultTextFontSize = "15px"
-defaultTextPercentFontSize = "40px"
+defaultTextFontSize = sizeMultiplier * 15 + "px"
+defaultTextPercentFontSize = sizeMultiplier * 40 + "px"
 defaultTextFontFamily = "sans-serif"
 defaultTextPercentFontFamily = "sans-serif"
 
@@ -57,7 +58,7 @@ app.directive "progressCircle",  ->
                 .attr "font-family", defaultTextFontFamily
                 .attr "fill", defaultTextColor
                 .style "text-anchor", "middle"
-                .attr "transform", "translate(0, #{defaultTextYPos})"
+                .attr "transform", "translate(0, #{textYPos})"
 
             # Percent value
             svg.append("text")
@@ -66,7 +67,7 @@ app.directive "progressCircle",  ->
                 .attr "font-family", defaultTextPercentFontFamily
                 .attr "fill", defaultTextColor
                 .style "text-anchor", "middle"
-                .attr "transform", "translate(0, #{defaultTextPercentYPos})"
+                .attr "transform", "translate(0, #{textPercentYPos})"
 
         # Create and return SVG arc 
         createArc = (percent, radius, thickness) ->
