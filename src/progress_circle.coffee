@@ -33,6 +33,12 @@ defaultDuration = 2000
 defaultDelay = 150
 defaultEase = "elastic"
 
+app = angular.module "ProgressCircleApp", []
+
+app.controller "ProgressCircle", ($scope) ->
+        $scope.actual = .4
+        $scope.expected = .3
+
 app.directive "progressCircle",  ->
     restrict: "EA"
     replace: true
