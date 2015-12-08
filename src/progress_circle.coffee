@@ -1,5 +1,5 @@
 # Size & position defaults
-sizeMultiplier = 1.2
+sizeMultiplier = 1.5
 svgHeight = 500 * sizeMultiplier
 svgWidth = 500 * sizeMultiplier
 innerRadius = 90 * sizeMultiplier
