@@ -1,0 +1,42 @@
+Main Features:
+
+-) Set initial arc position
+	- actual 
+	- expected
+
+-) Transition arc position
+	- change to actual 
+	- change to expected
+
+-) Set text
+	- actual
+
+-) Transition text
+	- change to actual
+
+-) Sanitize inputs
+	- actual
+		> 1
+		< 0
+		0 - 1
+		string
+		blank
+
+	- expected
+		> 1
+		< 0
+		0 - 1
+		string
+		blank
+		
+-) Transition actual arc color
+	- initial values 
+		green condition
+		orange condition
+		red condition
+
+	- actual arc transition
+		change actual to red, orange and green conditions
+		
+	- expected arc transition
+		change expected to red, orange and green conditions

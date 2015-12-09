@@ -1,5 +1,5 @@
 # Size & position defaults
-sizeMultiplier = 1.4
+sizeMultiplier = 1.9
 svgHeight = 500 * sizeMultiplier
 svgWidth = 500 * sizeMultiplier
 innerRadius = 90 * sizeMultiplier
@@ -36,8 +36,8 @@ defaultEase = "elastic"
 app = angular.module "ProgressCircleApp", []
 
 app.controller "ProgressCircle", ($scope) ->
-        $scope.actual = .4
-        $scope.expected = .3
+        $scope.actual = .73
+        $scope.expected = .5
 
 app.directive "progressCircle",  ->
     restrict: "EA"
@@ -199,7 +199,6 @@ app.directive "progressCircle",  ->
 
             if (attrs.actual > 1)
                 attrs.actual = 1
-
             if (attrs.actual < 0)
                 attrs.actual = 0
 
