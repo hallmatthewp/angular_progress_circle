@@ -1,5 +1,5 @@
 var app, circleRadius, cornerRadius, default25DeltaColor, default50DeltaColor, defaultActualArcColor, defaultCircleColor, defaultDelay, defaultDuration, defaultEase, defaultExpectedArcColor, defaultTextColor, defaultTextFontFamily, defaultTextFontSize, defaultTextPercentColor, defaultTextPercentFontFamily, defaultTextPercentFontSize, innerPercent, innerRadius, innerThickness, outerPercent, outerRadius, outerThickness, sizeMultiplier, svgHeight, svgWidth, textPercentYPos, textYPos;
-sizeMultiplier = 1.9;
+sizeMultiplier = 1.5;
 svgHeight = 500 * sizeMultiplier;
 svgWidth = 500 * sizeMultiplier;
 innerRadius = 90 * sizeMultiplier;
@@ -41,10 +41,9 @@ app.directive('progressCircle', function () {
     template: '<svg width=\'' + svgWidth + '\' height=\'' + svgHeight + '\'></svg>',
     link: function (scope, elem, attrs) {
       var actualChangeHandler, arcTween, createArc, drawActualArc, drawArc, drawBothArcs, drawCircle, drawExpectedArc, drawText, expectedChangeHandler, getActualArcColor, sanitizeInputs, svg, transitionActualArc, transitionArc, transitionExpectedArc;
-      drawCircle = function (percent, radius) {
-        console.log('drawCircle: ' + percent + ', ' + radius);
-        console.log(svg);
-        return svg.append('circle').attr('r', radius).style('fill', defaultCircleColor);
+      drawCircle = function () {
+        console.log('drawCircle: ' + circleRadius);
+        return svg.append('circle').attr('r', circleRadius).style('fill', defaultCircleColor);
       };
       drawText = function (percent) {
         console.log('drawText: ' + percent);
@@ -154,7 +153,7 @@ app.directive('progressCircle', function () {
       };
       svg = d3.select('svg').append('g').attr('transform', 'translate(' + svgWidth / 2 + ', ' + svgHeight / 2 + ')');
       sanitizeInputs();
-      drawCircle(innerPercent, circleRadius);
+      drawCircle();
       drawBothArcs();
       scope.$watch('expected', expectedChangeHandler);
       return scope.$watch('actual', actualChangeHandler);

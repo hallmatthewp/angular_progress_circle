@@ -1,5 +1,5 @@
 # Size & position defaults
-sizeMultiplier = 1.9
+sizeMultiplier = 1.5
 svgHeight = 500 * sizeMultiplier
 svgWidth = 500 * sizeMultiplier
 innerRadius = 90 * sizeMultiplier
@@ -46,11 +46,11 @@ app.directive "progressCircle",  ->
     link: (scope, elem, attrs) ->
 
         # draw a circle 
-        drawCircle = (percent, radius) ->
-            console.log("drawCircle: #{percent}, #{radius}")
-            console.log(svg)
+        drawCircle = ->
+            console.log("drawCircle: #{circleRadius}")
+
             svg.append("circle")
-                .attr "r", radius
+                .attr "r", circleRadius
                 .style "fill", defaultCircleColor
 
         # Draw the percentage texts on top of the circle
@@ -151,7 +151,7 @@ app.directive "progressCircle",  ->
 
             number = attrs.actual*100
             @textPercent.transition()
-                .text number.toFixed(0)+"%"   
+                .text number.toFixed(0)+"%" 
 
         # Begin an arc transition. This may also include color change.
         transitionArc = (arc, arcValue, percent, color) ->
@@ -219,7 +219,7 @@ app.directive "progressCircle",  ->
         sanitizeInputs()
 
         # Render circle and arcs/text
-        drawCircle(innerPercent, circleRadius)
+        drawCircle()
         drawBothArcs()
 
         # Set callback function for changes to either input
